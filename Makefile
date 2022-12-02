@@ -1,2 +1,5 @@
+run:
+	cargo +nightly run --target wasm32-unknown-unknown
+
 dev:
-	cargo +nightly run
+	trunk serve --open
