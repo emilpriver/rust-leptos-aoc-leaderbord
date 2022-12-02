@@ -1,4 +1,4 @@
-use fetch::fetch_example;
+use kodsnack::fetch_example;
 use leptos::*;
 
 pub fn main() {

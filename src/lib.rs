@@ -44,7 +44,7 @@ pub fn fetch_example(cx: Scope) -> web_sys::Element {
             <label>
                 "How many cats would you like?"
                 <input type="number"
-                    value={move || cat_count.get().to_string()}
+                    value=move || cat_count.get().to_string()
                     on:input=move |ev| {
                         let val = event_target_value(&ev).parse::<u32>().unwrap_or(0);
                         set_cat_count(val);
@@ -55,9 +55,8 @@ pub fn fetch_example(cx: Scope) -> web_sys::Element {
             <div>
                 // <Transition/> holds the previous value while new async data is being loaded
                 // Switch the <Transition/> to <Suspense/> to fall back to "Loading..." every time
-                <Transition
-                    fallback={"Loading (Suspense Fallback)...".to_string()}
-                    set_pending
+                <Suspense
+                    fallback="Loading (Suspense Fallback)...".to_string()
                 >
                     {move || {
                             cats.read().map(|data| match data {
@@ -67,7 +66,7 @@ pub fn fetch_example(cx: Scope) -> web_sys::Element {
                                         cats.iter()
                                             .map(|src| {
                                                 view! { cx,
-                                                    <img src={src}/>
+                                                    <img src=src />
                                                 }
                                             })
                                             .collect::<Vec<_>>()
@@ -76,7 +75,7 @@ pub fn fetch_example(cx: Scope) -> web_sys::Element {
                             })
                         }
                     }
-                </Transition>
+                </Suspense>
             </div>
         </div>
     }

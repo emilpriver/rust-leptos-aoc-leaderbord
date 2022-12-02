@@ -1,0 +1,2 @@
+dev:
+	cargo +nightly run
