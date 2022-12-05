@@ -1,74 +1,45 @@
-
-
-use gloo_timers::future::TimeoutFuture;
+use cfg_if::cfg_if;
 use leptos::*;
-use serde::{Deserialize, Serialize};
+use leptos_meta::*;
+use leptos_router::*;
+mod api;
+mod routes;
+use routes::leaderbord::*;
+use routes::nav::*;
 
-async fn fetch_cats(count: u32) -> Result<Vec<String>, ()> {
-    // artificial delay
-    // the cat API is too fast to show the transition
-    TimeoutFuture::new(500).await;
+#[component]
+pub fn App(cx: Scope) -> Element {
+    provide_context(cx, MetaContext::default());
 
-    if count > 0 {
-        let res = reqwasm::http::Request::get("https://adventofcode.com/2022/leaderboard/private/view/143527.json")
-        .send()
-        .await
-        .map_err(|_| ())?
-        .json::<Vec<Cat>>()
-        .await
-        .map_err(|_| ())?
-        .into_iter()
-        .map(|cat| cat.url)
-        .collect::<Vec<_>>();
-        Ok(res)
-    } else {
-        Ok(vec![])
+    view! {
+        cx,
+        <div>
+            <Stylesheet href="/static/style.css"/>
+            <Meta name="description" content="Advent of code - Leaderbord"/>
+            <Router>
+                <Nav />
+                <main>
+                    <Routes>
+                        <Route path="/" element=|cx| view! { cx,  <Leaderbord/> }/>
+                    </Routes>
+                </main>
+            </Router>
+        </div>
     }
 }
 
-pub fn fetch_example(cx: Scope) -> web_sys::Element {
-    let (cat_count, set_cat_count) = create_signal::<u32>(cx, 1);
-    let cats = create_resource(cx, cat_count, |count| fetch_cats(count));
-    let (pending, _set_pending) = create_signal(cx, false);
+// Needs to be in lib.rs AFAIK because wasm-bindgen needs us to be compiling a lib. I may be wrong.
+cfg_if! {
+    if #[cfg(feature = "hydrate")] {
+        use wasm_bindgen::prelude::wasm_bindgen;
 
-    view! { cx,
-        <div>
-            <label>
-                "How many cats would you like?"
-                <input type="number"
-                    value=move || cat_count.get().to_string()
-                    on:input=move |ev| {
-                        let val = event_target_value(&ev).parse::<u32>().unwrap_or(0);
-                        set_cat_count(val);
-                    }
-                />
-            </label>
-            {move || pending().then(|| view! { cx, <p>"Loading more cats..."</p> })}
-            <div>
-                // <Transition/> holds the previous value while new async data is being loaded
-                // Switch the <Transition/> to <Suspense/> to fall back to "Loading..." every time
-                <Suspense
-                    fallback="Loading (Suspense Fallback)...".to_string()
-                >
-                    {move || {
-                            cats.read().map(|data| match data {
-                                Err(_) => view! { cx,  <pre>"Error"</pre> },
-                                Ok(cats) => view! { cx,
-                                    <div>{
-                                        cats.iter()
-                                            .map(|src| {
-                                                view! { cx,
-                                                    <img src=src />
-                                                }
-                                            })
-                                            .collect::<Vec<_>>()
-                                    }</div>
-                                },
-                            })
-                        }
-                    }
-                </Suspense>
-            </div>
-        </div>
+        #[wasm_bindgen]
+        pub fn main() {
+            _ = console_log::init_with_level(log::Level::Debug);
+            console_error_panic_hook::set_once();
+            leptos::hydrate(body().unwrap(), move |cx| {
+                view! { cx, <App/> }
+            });
+        }
     }
 }

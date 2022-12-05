@@ -1,9 +1,42 @@
-use serde_derive::Deserialize;
-use serde_derive::Serialize;
+use leptos::{on_cleanup, Scope, Serializable};
+use serde::{Deserialize, Serialize};
+
+#[cfg(feature = "ssr")]
+pub async fn fetch_leaderbord() -> Vec<Score> {
+    let headers = Headers::new();
+    headers.set("SESSION", &env::var("AOC_SESSION_COOKIE").unwrap());
+
+    let res = Request::get("https://adventofcode.com/2022/leaderboard/private/view/143527.json")
+        .headers(headers)
+        .send()
+        .await;
+
+    match res {
+        Ok(data) => {
+            let json = data.json::<crate::types::AdventOfCodeResponse>().await;
+
+            match json {
+                Ok(json_data) => {
+                    let members = json!(&json_data.members);
+                    let members_slice = members.as_array();
+                    println!("{:?}", members_slice);
+                    vec![]
+                }
+                Err(..) => vec![],
+            }
+        }
+        Err(..) => vec![],
+    }
+}
+
+#[cfg(not(feature = "ssr"))]
+pub async fn fetch_leaderbord() -> Vec<Score> {
+    vec![]
+}
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Root {
+pub struct AdventOfCodeResponse {
     pub event: String,
     pub members: Members,
 }
