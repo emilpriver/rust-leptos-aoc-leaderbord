@@ -1,5 +1,5 @@
 use cfg_if::cfg_if;
-
+use leptos::*;
 // boilerplate to run in different modes
 cfg_if! {
     // server-only stuff
@@ -7,8 +7,8 @@ cfg_if! {
         use actix_files::{Files};
         use actix_web::*;
         use advent_of_code_dashboard::*;
-        use leptos_hackernews::*;
         use std::{net::SocketAddr, env};
+        use dotenv::dotenv;
 
         #[get("/style.css")]
         async fn css() -> impl Responder {
@@ -17,6 +17,8 @@ cfg_if! {
 
         #[actix_web::main]
         async fn main() -> std::io::Result<()> {
+            dotenv().ok();
+
             let addr = SocketAddr::from(([127,0,0,1],3000));
 
             HttpServer::new(move || {

@@ -240,12 +240,13 @@ dependencies = [
  "cfg-if",
  "console_error_panic_hook",
  "console_log",
+ "dotenv",
  "futures",
  "gloo-net",
  "leptos",
  "leptos_actix",
- "leptos_meta 0.0.4",
- "leptos_router 0.0.5",
+ "leptos_meta",
+ "leptos_router",
  "log",
  "reqwest",
  "serde",
@@ -558,6 +559,12 @@ dependencies = [
  "block-buffer",
  "crypto-common",
 ]
+
+[[package]]
+name = "dotenv"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "77c90badedccf4105eca100756a0b1289e191f6fcbdadd3cee1d2f614f97da8f"
 
 [[package]]
 name = "either"
@@ -996,8 +1003,8 @@ dependencies = [
  "actix-web",
  "futures",
  "leptos",
- "leptos_meta 0.0.5",
- "leptos_router 0.0.6",
+ "leptos_meta",
+ "leptos_router",
 ]
 
 [[package]]
@@ -1064,18 +1071,6 @@ dependencies = [
 
 [[package]]
 name = "leptos_meta"
-version = "0.0.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "187f5eaaa05502b69d2a7f82c63a73700690c32353c4ef4950bd5c391780a8d1"
-dependencies = [
- "cfg-if",
- "leptos",
- "typed-builder 0.11.0",
- "web-sys",
-]
-
-[[package]]
-name = "leptos_meta"
 version = "0.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6ec9905c84b667022597d62e61dca28905667f296f45035a7af00386208d4277"
@@ -1105,34 +1100,6 @@ dependencies = [
  "slotmap",
  "thiserror",
  "tokio",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
-]
-
-[[package]]
-name = "leptos_router"
-version = "0.0.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5c4b4a5e68c18786e8a1993cda6e0dd715ef101ada8b1652d35d0793d6917dec"
-dependencies = [
- "bincode",
- "cfg-if",
- "common_macros",
- "gloo-net",
- "itertools",
- "js-sys",
- "lazy_static",
- "leptos",
- "linear-map",
- "log",
- "regex",
- "serde",
- "serde_urlencoded",
- "thiserror",
- "typed-builder 0.10.0",
- "url",
- "urlencoding",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",

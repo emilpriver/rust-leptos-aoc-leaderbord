@@ -1,4 +1,5 @@
-use leptos::{on_cleanup, Scope, Serializable};
+use reqwest::header::{HeaderMap, HeaderName, USER_AGENT, HeaderValue,CONTENT_TYPE};
+use leptos::{Serializable};
 use serde::{Deserialize, Serialize};
 use std::env;
 
@@ -7,18 +8,24 @@ where
     T: Serializable,
 {
     let client = reqwest::Client::new();
+    
+    let session_cookie = &env::var("AOC_SESSION_COOKIE").unwrap();
+
+    let mut headers = HeaderMap::new();
+    headers.insert("session", HeaderValue::from_str(session_cookie).unwrap());
+
     let res = client
         .get("https://adventofcode.com/2022/leaderboard/private/view/143527.json")
-        .header("SESSION", &env::var("AOC_SESSION_COOKIE").unwrap())
+        .headers(headers)
         .send()
         .await
         .map_err(|e| log::error!("{e}"))
-        .ok()?
-        .text()
-        .await
         .ok()?;
 
-    T::from_json(&res).map_err(|e| log::error!("{e}")).ok()
+    let json = res.text().await.ok()?;
+    println!("{:?}", json);
+
+    T::from_json(&json).map_err(|e| log::error!("{e}")).ok()
 }
 
 #[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
