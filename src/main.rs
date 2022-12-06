@@ -1,6 +1,4 @@
-use advent_of_code_dashboard::fetch_example;
 use cfg_if::cfg_if;
-use leptos::*;
 
 // boilerplate to run in different modes
 cfg_if! {
@@ -8,6 +6,7 @@ cfg_if! {
     if #[cfg(feature = "ssr")] {
         use actix_files::{Files};
         use actix_web::*;
+        use advent_of_code_dashboard::*;
         use leptos_hackernews::*;
         use std::{net::SocketAddr, env};
 

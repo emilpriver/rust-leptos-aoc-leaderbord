@@ -1,54 +1,41 @@
 use leptos::{on_cleanup, Scope, Serializable};
 use serde::{Deserialize, Serialize};
+use std::env;
 
-#[cfg(feature = "ssr")]
-pub async fn fetch_leaderbord() -> Vec<Score> {
-    let headers = Headers::new();
-    headers.set("SESSION", &env::var("AOC_SESSION_COOKIE").unwrap());
-
-    let res = Request::get("https://adventofcode.com/2022/leaderboard/private/view/143527.json")
-        .headers(headers)
+pub async fn fetch_leaderbord<T>() -> Option<T>
+where
+    T: Serializable,
+{
+    let client = reqwest::Client::new();
+    let res = client
+        .get("https://adventofcode.com/2022/leaderboard/private/view/143527.json")
+        .header("SESSION", &env::var("AOC_SESSION_COOKIE").unwrap())
         .send()
-        .await;
+        .await
+        .map_err(|e| log::error!("{e}"))
+        .ok()?
+        .text()
+        .await
+        .ok()?;
 
-    match res {
-        Ok(data) => {
-            let json = data.json::<crate::types::AdventOfCodeResponse>().await;
-
-            match json {
-                Ok(json_data) => {
-                    let members = json!(&json_data.members);
-                    let members_slice = members.as_array();
-                    println!("{:?}", members_slice);
-                    vec![]
-                }
-                Err(..) => vec![],
-            }
-        }
-        Err(..) => vec![],
-    }
+    T::from_json(&res).map_err(|e| log::error!("{e}")).ok()
 }
 
-#[cfg(not(feature = "ssr"))]
-pub async fn fetch_leaderbord() -> Vec<Score> {
-    vec![]
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AdventOfCodeResponse {
     pub event: String,
     pub members: Members,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Members {
     #[serde(rename = "1789")]
     pub n1789: Score,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Score {
     pub id: i64,
@@ -64,7 +51,7 @@ pub struct Score {
     pub last_star_ts: i64,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct CompletionDayLevel {
     #[serde(rename = "1")]
@@ -73,7 +60,7 @@ pub struct CompletionDayLevel {
     pub n2: n22,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct n1 {
     #[serde(rename = "1")]
@@ -82,7 +69,7 @@ pub struct n1 {
     pub n2: n2,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct n12 {
     #[serde(rename = "get_star_ts")]
@@ -91,7 +78,7 @@ pub struct n12 {
     pub star_index: i64,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct n2 {
     #[serde(rename = "get_star_ts")]
@@ -100,7 +87,7 @@ pub struct n2 {
     pub star_index: i64,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct n22 {
     #[serde(rename = "1")]
@@ -109,7 +96,7 @@ pub struct n22 {
     pub n2: n23,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct n13 {
     #[serde(rename = "star_index")]
@@ -118,7 +105,7 @@ pub struct n13 {
     pub get_star_ts: i64,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct n23 {
     #[serde(rename = "get_star_ts")]
