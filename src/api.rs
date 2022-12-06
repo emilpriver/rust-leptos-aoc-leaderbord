@@ -1,4 +1,4 @@
-use reqwest::header::{HeaderMap, HeaderName, USER_AGENT, HeaderValue,CONTENT_TYPE};
+use reqwest::header::{HeaderMap, HeaderValue};
 use leptos::{Serializable};
 use serde::{Deserialize, Serialize};
 use std::env;
