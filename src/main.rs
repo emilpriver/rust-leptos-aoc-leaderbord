@@ -6,11 +6,12 @@ cfg_if! {
     if #[cfg(feature = "ssr")] {
         use actix_files::{Files};
         use actix_web::*;
+        use leptos::*;
         use advent_of_code_dashboard::*;
         use std::{net::SocketAddr, env};
         use dotenv::dotenv;
 
-        #[get("/style.css")]
+        #[get("/static/style.css")]
         async fn css() -> impl Responder {
             actix_files::NamedFile::open_async("./style.css").await
         }
