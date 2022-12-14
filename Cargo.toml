@@ -4,16 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-anyhow = "1"
-actix-files = { version = "0.6", optional = true }
-actix-web = { version = "4", optional = true, features = ["openssl", "macros"] }
 console_log = "0.2"
 console_error_panic_hook = "0.1"
 futures = "0.3"
 cfg-if = "1"
-leptos = { version="0.0.20", default-features = false, features = [
-	"serde",
-] }
+leptos = { version="0.0.20", default-features = false, features = ["serde"]}
 leptos_meta = { version = "0.0.5", default-features = false }
 leptos_actix = { version = "0.0.2", default-features = false, optional=true }
 leptos_router = {version = "0.0.6", default-features = false }
@@ -21,21 +16,16 @@ log = "0.4"
 simple_logger = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-gloo-net = { version = "0.2", features = ["http"] }
 reqwest = { version = "0.11", features = ["json"] }
-# openssl = { version = "0.10", features = ["v110"] }
-web-sys = { version = "0.3", features = ["AbortController", "AbortSignal"] }
 dotenv = "0.15.0"
+slice-group-by = {version= "0.3.0", optional = true}
+worker = { version = "0.0.12", optional = true }
+wasm-bindgen = "0.2.83"
 
 [features]
-default = ["csr"]
-csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
-hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
-ssr = ["dep:actix-files", "dep:actix-web", "dep:leptos_actix", "leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr"]
+default = ["ssr", "slice-group-by"]
+ssr = ["leptos/ssr", "dep:worker"]
+hydrate = ["leptos/hydrate"]
 
 [lib]
 crate-type = ["cdylib", "rlib"]
-
-[package.metadata.cargo-all-features]
-denylist = ["actix-files", "actix-web", "leptos_actix"]
-skip_feature_sets = [["csr", "ssr"], ["csr", "hydrate"], ["ssr", "hydrate"]]

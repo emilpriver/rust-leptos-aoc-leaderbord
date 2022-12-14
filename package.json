@@ -1,0 +1,12 @@
+{
+  "name": "kodsnack-aoc",
+  "version": "0.0.0",
+  "devDependencies": {
+    "wrangler": "2.1.13"
+  },
+  "scripts": {
+		"deploy": "wrangler publish",
+		"dev": "wrangler dev --local"
+	},
+  "private": true
+}

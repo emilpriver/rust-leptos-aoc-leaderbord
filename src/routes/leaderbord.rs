@@ -11,7 +11,7 @@ pub fn Leaderbord(cx: Scope) -> Element {
 
     view! {
         cx,
-        <div class="news-view">
+        <div class="scores-view view">
             <Transition
                 fallback=view! { cx,  <p>"Loading..."</p> }
             >
@@ -21,9 +21,9 @@ pub fn Leaderbord(cx: Scope) -> Element {
                     Some(Some(members)) => {
                         Some(view! { cx,
                             <ul>
-                                <For each=move || members.clone() key=|x| x.id>{
-                                    move |cx: Scope, score: &api::Score| {
-                                        view! { cx, <Score score=score.clone() />}
+                                <For each=move || members.clone() key=|x| x.len()>{
+                                    move |cx: Scope, scores: &Vec<api::Score>| {
+                                        view! {cx, <Group group=scores.clone() />}
                                     }
                                 }</For>
                             </ul>
@@ -36,12 +36,23 @@ pub fn Leaderbord(cx: Scope) -> Element {
 }
 
 #[component]
-fn Score(cx: Scope, score: api::Score) -> Element {
-    view!{
+fn Group(cx: Scope, group: Vec<api::Score>) -> Element {
+    view! {
         cx,
         <li>
-            {format!("{}-{}", score.name, score.stars)}
+            <ul>
+                <For each=move || group.clone() key=|x| x.id>{
+                move |cx: Scope, score: &api::Score| {
+                    view! {
+                        cx,
+                        <li>
+                            {format!("{:?} - {:?}", score.name, score.stars)}
+                        </li>
+                        }
+                    }
+                }
+                </For>
+            </ul>
         </li>
     }
-
 }

@@ -3,4 +3,4 @@ target
 .env
 pkg
 .leptos.kdl
-
+build
