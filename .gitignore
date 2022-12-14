@@ -4,3 +4,4 @@ target
 pkg
 .leptos.kdl
 build
+node_modules
